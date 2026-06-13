@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Portable Power Rescue brings charged portable batteries to Mount Pleasant-area homes during outages." />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Portable Power Rescue | Mount Pleasant Battery Backup Rental Sign-Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700;800&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rescue: {
+              navy: "#07111f",
+              slate: "#172334",
+              steel: "#2b3c53",
+              gold: "#f2c94c",
+              cream: "#fff7df",
+              paper: "#fbfaf6",
+              mist: "#e8eef4",
+              teal: "#75c6b5"
+            }
+          },
+          fontFamily: {
+            brand: ["Oxanium", "system-ui", "sans-serif"]
+          },
+          boxShadow: {
+            soft: "0 16px 38px rgba(7, 17, 31, 0.14)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .leaflet-container {
+      font-family: inherit;
+    }
+
+    .coverage-map .leaflet-control-attribution {
+      font-size: 10px;
+    }
+
+    .coverage-map.leaflet-container {
+      background: linear-gradient(135deg, #e8eef4 0%, #fbfaf6 55%, #fff7df 100%);
+    }
+
+    summary::marker {
+      content: "";
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      color: #2b3c53;
+      content: "+";
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    details[open] summary::after {
+      content: "−";
+    }
+  </style>
+</head>
+
+<body class="bg-rescue-paper text-rescue-navy antialiased">
+  <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <a href="#top" class="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Portable Power Rescue home">
+        <img src="assets/portable-power-rescue-battery-logo.png" alt="Portable Power Rescue battery logo" class="h-9 w-16 shrink-0 object-contain drop-shadow-sm sm:h-10 sm:w-20" />
+        <span class="min-w-0">
+          <span class="block truncate font-brand text-base font-extrabold uppercase leading-none tracking-[0.08em] sm:text-lg">
+            Portable Power Rescue
+          </span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-6 text-sm font-bold text-slate-600 md:flex" aria-label="Primary navigation">
+        <a class="hover:text-rescue-navy" href="#rental-request">Request form</a>
+        <a class="hover:text-rescue-navy" href="#pricing">Pricing</a>
+        <a class="hover:text-rescue-navy" href="#coverage">Coverage</a>
+        <a class="hover:text-rescue-navy" href="#outage-timeline">Process</a>
+        <a class="hover:text-rescue-navy" href="#faq">FAQ</a>
+      </nav>
+
+      <a href="tel:7245550199" class="whitespace-nowrap rounded-full bg-rescue-gold px-3 py-2 text-xs font-black text-rescue-navy shadow-sm transition hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-rescue-navy focus:ring-offset-2 sm:px-4 sm:text-sm">
+        <span class="sm:hidden">Call/Text</span>
+        <span class="hidden sm:inline">Call/Text 724-555-0199</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- CTA-first hero -->
+    <section class="bg-rescue-navy text-white">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:px-8">
+        <div class="flex flex-col justify-center">
+          <p class="inline-flex w-fit items-center rounded-full border border-rescue-gold/40 bg-rescue-gold/10 px-4 py-2 text-sm font-black text-rescue-gold">
+            Fast Battery Delivery
+          </p>
+
+          <h1 class="mt-6 max-w-3xl text-4xl font-black leading-[1.05] tracking-normal sm:text-5xl lg:text-6xl">
+            When the power goes out, we bring the battery.
+          </h1>
+
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-white/78">
+            Keep the important stuff running: fridge, router, phones, lights, CPAP & oxygen machines, and small essentials. $199 includes delivery, help plugging in, pickup, and up to four extra days of
+            daily battery swaps.
+          </p>
+
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="tel:7245550199" class="inline-flex items-center justify-center rounded-full bg-rescue-gold px-7 py-4 text-lg font-black text-rescue-navy shadow-lg transition hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-rescue-gold focus:ring-offset-2 focus:ring-offset-rescue-navy">
+              Call/Text 724-555-0199
+            </a>
+            <a href="#rental-request" class="inline-flex items-center justify-center rounded-full border border-white/25 px-7 py-4 text-lg font-black text-white transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-rescue-navy">
+              Check availability
+            </a>
+          </div>
+
+          <div class="mt-8 grid gap-3 text-sm font-semibold text-white/82 sm:grid-cols-3">
+            <div class="rounded-lg border border-white/12 bg-white/8 p-4">
+              <p class="text-2xl font-black text-rescue-gold">$199</p>
+              <p class="mt-1">battery, cord, swaps, pickup</p>
+            </div>
+            <div class="rounded-lg border border-white/12 bg-white/8 p-4">
+              <p class="text-2xl font-black text-rescue-gold">Quiet</p>
+              <p class="mt-1">no gas or exhaust</p>
+            </div>
+            <div class="rounded-lg border border-white/12 bg-white/8 p-4">
+              <p class="text-2xl font-black text-rescue-gold">Local</p>
+              <p class="mt-1">Mount Pleasant area</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="rounded-lg bg-rescue-cream p-6 text-rescue-navy shadow-soft sm:p-8">
+          <img src="assets/portable-power-rescue-battery-logo.png" alt="Portable Power Rescue battery logo" class="mx-auto h-auto w-56 max-w-full object-contain drop-shadow-xl sm:w-64" />
+          <p class="mt-5 text-sm font-black uppercase tracking-[0.18em] text-rescue-gold">Need power now?</p>
+          <h2 class="mt-4 text-3xl font-black leading-tight tracking-normal sm:text-4xl">
+            Keep the important stuff running.
+          </h2>
+          <p class="mt-4 text-base leading-7 text-slate-700">
+            Call, text, or send the form. Tell us where you are and what you need powered.
+          </p>
+          <div class="mt-6 border-t border-rescue-gold/50 pt-5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <p class="text-sm font-black uppercase tracking-[0.16em] text-rescue-steel">Flat rental</p>
+              <p class="text-5xl font-black">$199</p>
+            </div>
+            <p class="mt-3 text-sm font-semibold leading-6 text-slate-700">
+              Delivery, a charged battery, cord, help plugging in, pickup, and up to four extra swap days.
+            </p>
+          </div>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <a href="#rental-request" class="inline-flex items-center justify-center rounded-full bg-rescue-gold px-5 py-3.5 text-base font-black text-rescue-navy shadow-lg transition hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-rescue-gold focus:ring-offset-2 focus:ring-offset-rescue-navy">
+              Start request
+            </a>
+            <a href="sms:7245550199" class="inline-flex items-center justify-center rounded-full border border-rescue-navy/20 px-5 py-3.5 text-base font-black text-rescue-navy transition hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-rescue-navy focus:ring-offset-2 focus:ring-offset-rescue-cream">
+              Text now
+            </a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Coverage map -->
+    <section id="coverage" class="bg-white py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Coverage area</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+            We start close to Mount Pleasant.
+          </h2>
+          <p class="mt-5 text-lg leading-8 text-slate-700">
+            Send your ZIP code and we will let you know if we can get a battery to you.
+          </p>
+        </div>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
+          <div class="overflow-hidden rounded-lg bg-slate-100 shadow-soft ring-1 ring-slate-200">
+            <div id="coverage-map" class="coverage-map flex h-[420px] min-h-[360px] w-full items-center justify-center text-center text-sm font-semibold text-slate-600" aria-label="Interactive map showing Portable Power Rescue coverage areas">
+              Loading coverage map...
+            </div>
+            <noscript>
+              <p class="bg-white p-4 text-sm font-semibold text-slate-600">
+                Enable JavaScript to view the interactive coverage map.
+              </p>
+            </noscript>
+            <p id="coverage-map-note" hidden class="bg-white p-4 text-sm font-semibold text-slate-600">
+              The map background is temporarily unavailable. Coverage zones are still shown, and you can call or text
+              724-555-0199 to check your ZIP code.
+            </p>
+          </div>
+
+          <aside class="rounded-lg bg-rescue-paper p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+            <p class="text-sm font-black uppercase tracking-[0.16em] text-rescue-steel">Local delivery area</p>
+            <h3 class="mt-4 text-2xl font-black">Coverage changes during storms.</h3>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              This map is a starting area. Roads, outage size, timing, and battery availability all matter.
+            </p>
+
+            <ul id="coverage-list" class="mt-6 space-y-3" aria-label="Coverage area list"></ul>
+
+            <a href="#rental-request" class="mt-7 inline-flex w-full items-center justify-center rounded-full bg-rescue-navy px-6 py-3.5 text-base font-black text-white shadow-lg transition hover:bg-rescue-slate focus:outline-none focus:ring-2 focus:ring-rescue-navy focus:ring-offset-2">
+              Check my ZIP code
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust and benefit strip -->
+    <section aria-label="Core benefits" class="border-b border-slate-200 bg-white">
+      <div class="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-slate-200 sm:grid-cols-4">
+        <div class="bg-white px-4 py-5 sm:px-6">
+          <p class="text-sm font-black text-rescue-navy">No gasoline</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">No cans, no fuel runs</p>
+        </div>
+        <div class="bg-white px-4 py-5 sm:px-6">
+          <p class="text-sm font-black text-rescue-navy">No fumes</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">Battery power only</p>
+        </div>
+        <div class="bg-white px-4 py-5 sm:px-6">
+          <p class="text-sm font-black text-rescue-navy">Use indoors</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">Follow device guidance</p>
+        </div>
+        <div class="bg-white px-4 py-5 sm:px-6">
+          <p class="text-sm font-black text-rescue-navy">Local help</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">$199, swaps included</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Capacity explanation -->
+    <section class="bg-rescue-paper py-16 sm:py-20">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:px-8">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Why batteries</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+            Most outages only need the basics.
+          </h2>
+        </div>
+        <div class="space-y-5 text-lg leading-8 text-slate-700">
+          <p>
+            You may not need a whole-house generator. Sometimes you just need the fridge cold, the router online,
+            phones charged, and a few lights on.
+          </p>
+          <p>
+            We bring a charged portable battery, help plug in the important items, and swap batteries daily if the
+            outage drags on.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Outage timeline -->
+    <section id="outage-timeline" class="bg-white py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Outage timeline</p>
+            <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+              From outage to power again.
+            </h2>
+            <p class="mt-5 text-lg leading-8 text-slate-700">
+              A simple way to get the basics running.
+            </p>
+          </div>
+
+          <ol class="relative space-y-4 border-l-2 border-rescue-gold pl-6 sm:pl-8">
+            <li class="relative rounded-lg bg-rescue-paper p-5 shadow-sm ring-1 ring-slate-200">
+              <span class="absolute -left-[35px] top-5 flex h-7 w-7 items-center justify-center rounded-full bg-rescue-gold text-xs font-black text-rescue-navy ring-4 ring-white">
+                1
+              </span>
+              <h3 class="text-lg font-black">Power outage</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                The fridge, router, phones, lights, or CPAP need power.
+              </p>
+            </li>
+
+            <li class="relative rounded-lg bg-rescue-paper p-5 shadow-sm ring-1 ring-slate-200">
+              <span class="absolute -left-[35px] top-5 flex h-7 w-7 items-center justify-center rounded-full bg-rescue-gold text-xs font-black text-rescue-navy ring-4 ring-white">
+                2
+              </span>
+              <h3 class="text-lg font-black">Book a battery</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                Call, text, or send the form with your ZIP code and what you want to plug in.
+              </p>
+            </li>
+
+            <li class="relative rounded-lg bg-rescue-paper p-5 shadow-sm ring-1 ring-slate-200">
+              <span class="absolute -left-[35px] top-5 flex h-7 w-7 items-center justify-center rounded-full bg-rescue-gold text-xs font-black text-rescue-navy ring-4 ring-white">
+                3
+              </span>
+              <h3 class="text-lg font-black">Battery is delivered</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                If a battery is available, we bring it to you with an extension cord.
+              </p>
+            </li>
+
+            <li class="relative rounded-lg bg-rescue-paper p-5 shadow-sm ring-1 ring-slate-200">
+              <span class="absolute -left-[35px] top-5 flex h-7 w-7 items-center justify-center rounded-full bg-rescue-gold text-xs font-black text-rescue-navy ring-4 ring-white">
+                4
+              </span>
+              <h3 class="text-lg font-black">We help plug things in</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                We help connect the items you want to keep running.
+              </p>
+            </li>
+
+            <li class="relative rounded-lg bg-rescue-paper p-5 shadow-sm ring-1 ring-slate-200">
+              <span class="absolute -left-[35px] top-5 flex h-7 w-7 items-center justify-center rounded-full bg-rescue-gold text-xs font-black text-rescue-navy ring-4 ring-white">
+                5
+              </span>
+              <h3 class="text-lg font-black">Back to normal</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                When power comes back, we pick everything up.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simple pricing -->
+    <section id="pricing" class="bg-rescue-mist py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Simple outage pricing</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+            One price while the outage lasts.
+          </h2>
+          <p class="mt-5 text-lg leading-8 text-slate-700">
+            $199 covers the battery, delivery, help plugging in, pickup, and daily swaps for up to four extra days.
+          </p>
+        </div>
+
+        <div class="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <article class="rounded-lg bg-white p-6 shadow-soft ring-1 ring-rescue-gold/50 sm:p-8">
+            <p class="text-xs font-black uppercase tracking-[0.16em] text-rescue-steel">Standard outage rental</p>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <h3 class="text-2xl font-black">Delivered battery package</h3>
+              <p class="text-5xl font-black text-rescue-navy">$199</p>
+            </div>
+            <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
+              Built for the essentials, not the whole house. Availability depends on where you are, what you need to
+              power, and how many batteries are out.
+            </p>
+            <ul class="mt-6 grid gap-3 text-sm font-semibold text-slate-700 sm:grid-cols-2">
+              <li class="rounded-lg bg-rescue-paper px-4 py-3">Local delivery</li>
+              <li class="rounded-lg bg-rescue-paper px-4 py-3">Charged portable battery</li>
+              <li class="rounded-lg bg-rescue-paper px-4 py-3">Extension cord</li>
+              <li class="rounded-lg bg-rescue-paper px-4 py-3">Help plugging in</li>
+              <li class="rounded-lg bg-rescue-paper px-4 py-3 sm:col-span-2">Up to four extra days of daily battery swaps</li>
+              <li class="rounded-lg bg-rescue-paper px-4 py-3 sm:col-span-2">Pickup when your power is back</li>
+            </ul>
+            <a href="#rental-request" class="mt-7 inline-flex w-full items-center justify-center rounded-full bg-rescue-navy px-6 py-3.5 text-base font-black text-white shadow-lg transition hover:bg-rescue-slate focus:outline-none focus:ring-2 focus:ring-rescue-navy focus:ring-offset-2 sm:w-auto">
+              Request the $199 rental
+            </a>
+          </article>
+
+          <article class="rounded-lg bg-rescue-navy p-6 text-white shadow-soft sm:p-8">
+            <p class="text-xs font-black uppercase tracking-[0.16em] text-rescue-gold">If it lasts longer</p>
+            <h3 class="mt-4 text-2xl font-black">We keep swapping batteries</h3>
+            <p class="mt-4 text-5xl font-black text-rescue-gold">4 days</p>
+            <p class="mt-4 text-sm leading-6 text-white/75">
+              If the power stays out, the $199 rental includes up to four extra days of daily battery swaps.
+            </p>
+            <div class="mt-6 rounded-lg border border-white/12 bg-white/8 p-4 text-sm font-semibold text-white/80">
+              Swap timing depends on roads, weather, inventory, and what you are powering.
+            </div>
+          </article>
+        </div>
+
+        <div class="mt-8 grid gap-3 text-sm font-semibold text-slate-700 sm:grid-cols-4">
+          <div class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">Fridge and freezer support</div>
+          <div class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">CPAP and health devices</div>
+          <div class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">Internet and router backup</div>
+          <div class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">Phones, lights, and devices</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Availability request form -->
+    <section id="rental-request" class="scroll-mt-20 bg-rescue-paper py-16 sm:py-20">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:px-8">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Check availability</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+            Tell us what needs power.
+          </h2>
+          <p class="mt-5 text-lg leading-8 text-slate-700">
+            Send your ZIP code and a quick note about what you want to plug in. We will let you know what is
+            available.
+          </p>
+          <div class="mt-7 rounded-lg bg-white p-5 shadow-sm ring-1 ring-slate-200">
+            <p class="text-sm font-black text-rescue-navy">$199 flat outage rental</p>
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Delivery, battery, cord, help plugging in, pickup, and up to four extra days of daily swaps.
+            </p>
+          </div>
+        </div>
+
+        <aside class="rounded-lg bg-white p-5 text-rescue-navy shadow-soft sm:p-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Availability form</p>
+              <h3 class="mt-2 text-2xl font-black">Request a battery</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-600">
+                No payment here. This just helps us check availability and get back to you.
+              </p>
+            </div>
+            <svg class="hidden h-20 w-20 shrink-0 text-rescue-steel sm:block" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+              <rect x="17" y="24" width="56" height="48" rx="8" stroke="currentColor" stroke-width="5" />
+              <path d="M73 39h6c3 0 5 2 5 5v8c0 3-2 5-5 5h-6" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+              <path d="M42 36 32 53h13l-5 12 17-22H44l5-7Z" fill="#f2c94c" />
+            </svg>
+          </div>
+
+          <!-- Backend integration: connect this form to CRM, SMS, email, or a spreadsheet when ready. -->
+          <form action="#" method="post" class="mt-5 space-y-3">
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label for="name" class="block text-sm font-black">Name</label>
+                <input id="name" name="name" type="text" autocomplete="name" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-base shadow-sm outline-none transition focus:border-rescue-steel focus:ring-4 focus:ring-rescue-gold/25" />
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-black">Phone</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-base shadow-sm outline-none transition focus:border-rescue-steel focus:ring-4 focus:ring-rescue-gold/25" />
+              </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label for="email" class="block text-sm font-black">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-base shadow-sm outline-none transition focus:border-rescue-steel focus:ring-4 focus:ring-rescue-gold/25" />
+              </div>
+              <div>
+                <label for="zip" class="block text-sm font-black">ZIP code</label>
+                <input id="zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-base shadow-sm outline-none transition focus:border-rescue-steel focus:ring-4 focus:ring-rescue-gold/25" />
+              </div>
+            </div>
+
+            <fieldset>
+              <legend class="block text-sm font-black">Main backup need</legend>
+              <p class="mt-1 text-xs font-semibold text-slate-500">Pick any that apply.</p>
+              <div class="mt-2 grid grid-cols-2 gap-2">
+                <label class="relative flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-black shadow-sm transition hover:border-rescue-steel has-[:checked]:border-rescue-navy has-[:checked]:bg-rescue-navy has-[:checked]:text-white">
+                  <input class="sr-only" type="checkbox" name="backup_need[]" value="fridge" />
+                  <span>Fridge</span>
+                </label>
+                <label class="relative flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-black shadow-sm transition hover:border-rescue-steel has-[:checked]:border-rescue-navy has-[:checked]:bg-rescue-navy has-[:checked]:text-white">
+                  <input class="sr-only" type="checkbox" name="backup_need[]" value="health" />
+                  <span>Health</span>
+                </label>
+                <label class="relative flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-black shadow-sm transition hover:border-rescue-steel has-[:checked]:border-rescue-navy has-[:checked]:bg-rescue-navy has-[:checked]:text-white">
+                  <input class="sr-only" type="checkbox" name="backup_need[]" value="internet" />
+                  <span>Internet</span>
+                </label>
+                <label class="relative flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-black shadow-sm transition hover:border-rescue-steel has-[:checked]:border-rescue-navy has-[:checked]:bg-rescue-navy has-[:checked]:text-white">
+                  <input class="sr-only" type="checkbox" name="backup_need[]" value="others" />
+                  <span>Others</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="message" class="block text-sm font-black">Message</label>
+              <textarea id="message" name="message" rows="3" placeholder="What do you want to keep running? Add any model numbers or delivery notes if you have them." class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-base shadow-sm outline-none transition focus:border-rescue-steel focus:ring-4 focus:ring-rescue-gold/25"></textarea>
+            </div>
+
+            <button type="submit" class="w-full rounded-full bg-rescue-navy px-6 py-3.5 text-base font-black text-white shadow-lg transition hover:bg-rescue-slate focus:outline-none focus:ring-2 focus:ring-rescue-navy focus:ring-offset-2">
+              Check outage availability
+            </button>
+
+            <p class="text-xs leading-5 text-slate-500">
+              For medical equipment, follow your doctor's and equipment provider's backup power guidance.
+            </p>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Battery vs generator -->
+    <section class="bg-white py-16 sm:py-20">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">Battery vs. generator</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">
+            A quieter option for smaller needs.
+          </h2>
+          <p class="mt-5 text-lg leading-8 text-slate-700">
+            Generators have their place. Batteries are simpler when you only need a few things to stay on.
+          </p>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <article class="rounded-lg border border-rescue-teal/40 bg-rescue-teal/10 p-6">
+            <h3 class="text-xl font-black">Battery rentals</h3>
+            <ul class="mt-5 space-y-3 text-sm font-semibold text-slate-700">
+              <li>Quiet</li>
+              <li>No gasoline to store</li>
+              <li>No exhaust</li>
+              <li>Use indoors</li>
+              <li>$199 with swaps and pickup</li>
+            </ul>
+          </article>
+
+          <article class="rounded-lg border border-slate-200 bg-slate-50 p-6">
+            <h3 class="text-xl font-black">Generators</h3>
+            <ul class="mt-5 space-y-3 text-sm font-semibold text-slate-700">
+              <li>Noisy</li>
+              <li>Requires gasoline</li>
+              <li>Must stay outside</li>
+              <li>Carbon monoxide risk</li>
+              <li>More setup required</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="bg-rescue-mist py-16 sm:py-20">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div>
+          <p class="text-sm font-black uppercase tracking-[0.18em] text-rescue-steel">FAQ</p>
+          <h2 class="mt-4 text-3xl font-black tracking-normal sm:text-4xl">Quick questions.</h2>
+        </div>
+
+        <div class="mt-10 divide-y divide-slate-200 rounded-lg bg-white shadow-soft ring-1 ring-slate-200">
+          <details class="group p-6" open>
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Is this available right now?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              It depends on where you are, how many batteries are out, and road conditions. Send the form or text us
+              and we will check.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">What if the outage lasts several days?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              The $199 rental includes up to four extra days of daily battery swaps during the same outage.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Can this run my whole house?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              No. This is for essentials like a fridge, freezer, router, phones, lights, CPAP, and small devices.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Can I use it indoors?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              Yes. The batteries do not create exhaust. Please follow the device instructions.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Will it run my CPAP?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              Usually, yes. Runtime depends on your machine and whether you use heat or humidifier settings.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Will it run an oxygen concentrator?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              Maybe. We need the exact model first so we can check the power draw.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Do you offer delivery?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              Yes. Delivery, help plugging in, swaps, and pickup are included in the $199 rental when service is
+              available.
+            </p>
+          </details>
+
+          <details class="group p-6">
+            <summary class="grid cursor-pointer list-none grid-cols-[minmax(0,1fr)_auto] items-center gap-2 font-black">
+              <span class="min-w-0">Do I need extension cords?</span>
+            </summary>
+            <p class="mt-4 text-sm leading-6 text-slate-600">
+              One extension cord is included. We may have extra cords or power strips available if the setup calls for it.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-rescue-navy py-10 text-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-8 md:grid-cols-[1fr_1.4fr]">
+        <div>
+          <p class="text-2xl font-black">Portable Power Rescue</p>
+          <p class="mt-3 text-sm leading-6 text-white/70">
+            We bring charged portable batteries to Mount Pleasant-area homes during outages.
+          </p>
+        </div>
+        <div class="grid gap-5 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p class="font-black text-rescue-gold">Phone</p>
+            <a class="mt-2 block text-white/78 hover:text-white" href="tel:7245550199">724-555-0199</a>
+          </div>
+          <div>
+            <p class="font-black text-rescue-gold">Email</p>
+            <a class="mt-2 block break-words text-white/78 hover:text-white" href="mailto:hello@portablepowerrescue.com">
+              hello@PortablePowerRescue.com
+            </a>
+          </div>
+          <div>
+            <p class="font-black text-rescue-gold">Website</p>
+            <a class="mt-2 block break-words text-white/78 hover:text-white" href="https://PortablePowerRescue.com">
+              PortablePowerRescue.com
+            </a>
+          </div>
+          <div>
+            <p class="font-black text-rescue-gold">Service area</p>
+            <p class="mt-2 text-white/78">Mount Pleasant, Pennsylvania</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 border-t border-white/12 pt-6">
+        <p class="text-xs leading-6 text-white/58">
+          Not intended as a replacement for emergency services, utility power, or medically required backup systems.
+          If you use life-sustaining medical equipment, follow your doctor's and equipment provider's backup power
+          guidance.
+        </p>
+      </div>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    // Tile provider: keep this configurable so the site can switch to a commercial or self-hosted provider without changing map logic.
+    // OSM public tiles require visible attribution, browser caching, a valid Referer, and no bulk preloading.
+    const tileProvider = {
+      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      options: {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        referrerPolicy: "strict-origin-when-cross-origin",
+        updateWhenIdle: true,
+        keepBuffer: 1
+      }
+    };
+
+    // Coverage areas: add, remove, or edit objects here. Center is [latitude, longitude]; radiusMeters controls the circle size.
+    const coverageAreas = [
+      {
+        name: "Mount Pleasant area",
+        label: "Closest service area",
+        center: [40.1498, -79.5426],
+        radiusMeters: 14000,
+        color: "#f2c94c",
+        towns: ["Mount Pleasant", "15666", "Norvelt", "Mammoth", "Ruffsdale"]
+      },
+      {
+        name: "Nearby by request",
+        label: "When available",
+        center: [40.1058, -79.5884],
+        radiusMeters: 11000,
+        color: "#75c6b5",
+        towns: ["Scottdale", "Donegal", "Everson", "Alverton"]
+      }
+    ];
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (character) => {
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        };
+        return entities[character];
+      });
+    }
+
+    function renderCoverageList() {
+      const list = document.getElementById("coverage-list");
+      if (!list) return;
+
+      list.innerHTML = coverageAreas
+        .map(
+          (area) => `
+              <li class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                <div class="flex items-start gap-3">
+                  <span class="mt-1 h-3 w-3 shrink-0 rounded-full" style="background-color: ${escapeHtml(area.color)}"></span>
+                  <div>
+                    <p class="font-black">${escapeHtml(area.name)}</p>
+                    <p class="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-rescue-steel">${escapeHtml(area.label)}</p>
+                    <p class="mt-2 text-sm leading-6 text-slate-600">${area.towns.map(escapeHtml).join(", ")}</p>
+                  </div>
+                </div>
+              </li>
+            `
+        )
+        .join("");
+    }
+
+    function renderCoverageMap() {
+      const mapElement = document.getElementById("coverage-map");
+      if (!mapElement) return;
+
+      if (!window.L) {
+        mapElement.innerHTML = '<div class="p-6">Coverage map could not load. Please call or text 724-555-0199 to check your ZIP code.</div>';
+        renderCoverageList();
+        return;
+      }
+
+      mapElement.textContent = "";
+      mapElement.classList.remove("flex", "items-center", "justify-center", "text-center");
+
+      const map = L.map(mapElement, {
+        scrollWheelZoom: false,
+        zoomControl: true
+      }).setView([40.1498, -79.5426], 11);
+
+      const mapNote = document.getElementById("coverage-map-note");
+      const baseTileLayer = tileProvider.url ? L.tileLayer(tileProvider.url, tileProvider.options) : null;
+
+      if (baseTileLayer) {
+        baseTileLayer.on("tileerror", () => {
+          if (map.hasLayer(baseTileLayer)) {
+            map.removeLayer(baseTileLayer);
+          }
+
+          if (mapNote) {
+            mapNote.hidden = false;
+          }
+        });
+
+        baseTileLayer.addTo(map);
+      }
+
+      const coverageLayer = L.featureGroup().addTo(map);
+
+      coverageAreas.forEach((area) => {
+        const circle = L.circle(area.center, {
+          color: area.color,
+          fillColor: area.color,
+          fillOpacity: 0.18,
+          radius: area.radiusMeters,
+          weight: 2
+        }).addTo(coverageLayer);
+
+        const townList = area.towns.map(escapeHtml).join(", ");
+        circle.bindTooltip(`<strong>${escapeHtml(area.name)}</strong><br>${escapeHtml(area.label)}`, {
+          sticky: true
+        });
+        circle.bindPopup(`
+            <strong>${escapeHtml(area.name)}</strong><br>
+            ${escapeHtml(area.label)}<br>
+            <span>${townList}</span>
+          `);
+      });
+
+      if (coverageAreas.length > 0) {
+        map.fitBounds(coverageLayer.getBounds(), {
+          maxZoom: 10,
+          padding: [24, 24]
+        });
+      }
+
+      renderCoverageList();
+    }
+
+    document.addEventListener("DOMContentLoaded", renderCoverageMap);
+  </script>
+</body>
+
+</html>
